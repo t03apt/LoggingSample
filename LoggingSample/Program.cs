@@ -87,6 +87,5 @@ namespace LoggingSample
         }
 
         public string MyProperty { get; set; } = "My custom property";
-
     }
 }
