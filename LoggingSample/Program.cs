@@ -12,11 +12,11 @@ namespace LoggingSample
     {
         static void Main(string[] args)
         {
-            WriteHeader("Microsoft.Extensions.Logging.ConsoleLoggerExtensions.AddConsole()");
+            WriteHeader("USING: Microsoft.Extensions.Logging.ConsoleLoggerExtensions.AddConsole()");
 
             RunTest(builder => builder.AddConsole());
 
-            WriteHeader("Serilog.WriteTo.Console()");
+            WriteHeader("USING: Serilog.WriteTo.Console()");
 
             Log.Logger = new LoggerConfiguration()
                 .Enrich.WithExceptionDetails()
@@ -25,13 +25,12 @@ namespace LoggingSample
 
             RunTest(builder => builder.AddSerilog());
 
-            WriteHeader("Serilog.WriteTo.Console(new CompactJsonFormatter())");
+            WriteHeader("USING: Serilog.WriteTo.Console(new CompactJsonFormatter())");
 
             Log.Logger = new LoggerConfiguration()
                 .Enrich.WithExceptionDetails()
-
                 .WriteTo.Console(new CompactJsonFormatter())
-              .CreateLogger();
+                .CreateLogger();
 
             RunTest(builder => builder.AddSerilog());
         }
