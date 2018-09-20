@@ -55,7 +55,7 @@ namespace LoggingSample
                 }
                 catch (Exception ex)
                 {
-                    logger.LogError(ex, "Error. {SampleProperty}", "Sample property value");
+                    logger.LogError(ex, "Error. {MessageProperty}", "Sample property value");
                 }
             }
         }
@@ -63,7 +63,7 @@ namespace LoggingSample
         private static void ThrowCustomException()
         {
             var ex = new CustomException("Custom exception message");
-            ex.Data["myProperty"] = "my property value";
+            ex.Data["DataProperty"] = "my property value";
             throw ex;
         }
     }
