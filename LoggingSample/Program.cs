@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -10,17 +9,19 @@ namespace LoggingSample
 {
     class Program
     {
-        static void Main(string[] args)
+        private static void Main()
         {
             WriteHeader("USING: Microsoft.Extensions.Logging.ConsoleLoggerExtensions.AddConsole()");
 
-            RunTest(builder => builder.AddConsole());
+            RunTest(builder => 
+                builder.AddConsole(
+                    configure => configure.IncludeScopes = true));
 
             WriteHeader("USING: Serilog.WriteTo.Console()");
 
             Log.Logger = new LoggerConfiguration()
                 .Enrich.WithExceptionDetails()
-                .WriteTo.Console()
+                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Properties}{NewLine}{Exception}")
                 .CreateLogger();
 
             RunTest(builder => builder.AddSerilog());
@@ -43,19 +44,22 @@ namespace LoggingSample
         private static void RunTest(Action<ILoggingBuilder> configureLogging)
         {
             var services = new ServiceCollection();
-            services.AddLogging(builder => configureLogging(builder));
+            services.AddLogging(configureLogging);
 
             using (var serviceProvider = services.BuildServiceProvider(true))
             {
                 var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
 
-                try
+                using (logger.BeginMessage("message123", "correlation123"))
                 {
-                    ThrowCustomException();
-                }
-                catch (Exception ex)
-                {
-                    logger.LogError(ex, "Error. {MessageProperty}", "Sample property value");
+                    try
+                    {
+                        ThrowCustomException();
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogError(ex, "Error. {MessageProperty}", "Sample property value");
+                    }
                 }
             }
         }
@@ -66,26 +70,5 @@ namespace LoggingSample
             ex.Data["DataProperty"] = "my property value";
             throw ex;
         }
-    }
-
-    public class CustomException : Exception
-    {
-        public CustomException()
-        {
-        }
-
-        public CustomException(string message) : base(message)
-        {
-        }
-
-        public CustomException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
-
-        protected CustomException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
-
-        public string MyProperty { get; set; } = "My custom property";
     }
 }
