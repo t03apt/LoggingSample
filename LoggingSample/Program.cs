@@ -36,6 +36,15 @@ namespace LoggingSample
 
             RunTest(builder => builder.AddSerilog());
 
+            WriteHeader("USING: Serilog.WriteTo.Console(new RenderedCompactJsonFormatter())");
+
+            Log.Logger = new LoggerConfiguration()
+                .Enrich.WithExceptionDetails()
+                .WriteTo.Console(new RenderedCompactJsonFormatter())
+                .CreateLogger();
+
+            RunTest(builder => builder.AddSerilog());
+
             WriteHeader("USING: Serilog.WriteTo.Console(new ElasticsearchJsonFormatter())");
 
             Log.Logger = new LoggerConfiguration()
