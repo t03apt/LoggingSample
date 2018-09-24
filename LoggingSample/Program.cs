@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Exceptions;
 using Serilog.Formatting.Compact;
+using Serilog.Sinks.Elasticsearch;
 
 namespace LoggingSample
 {
@@ -34,6 +35,15 @@ namespace LoggingSample
                 .CreateLogger();
 
             RunTest(builder => builder.AddSerilog());
+
+            WriteHeader("USING: Serilog.WriteTo.Console(new ElasticsearchJsonFormatter())");
+
+            Log.Logger = new LoggerConfiguration()
+                .Enrich.WithExceptionDetails()
+                .WriteTo.Console(new ElasticsearchJsonFormatter())
+                .CreateLogger();
+
+            RunTest(builder => builder.AddSerilog());
         }
 
         private static void WriteHeader(string header)
@@ -51,6 +61,7 @@ namespace LoggingSample
                 var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
 
                 using (logger.BeginMessage("message123", "correlation123"))
+                using (logger.BeginMessage("message123", "correlation456"))
                 {
                     try
                     {
