@@ -68,8 +68,6 @@ namespace LoggingSample
             using (var serviceProvider = services.BuildServiceProvider(true))
             {
                 var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
-
-
                 try
                 {
                     logger.LogInformation(
@@ -84,13 +82,6 @@ namespace LoggingSample
                     logger.LogError(e, "Error");
                 }
             }
-        }
-
-        private static void ThrowCustomException()
-        {
-            var ex = new CustomException("Custom exception message");
-            ex.Data["DataProperty"] = "my property value";
-            throw ex;
         }
     }
 }
