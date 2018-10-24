@@ -69,17 +69,19 @@ namespace LoggingSample
             {
                 var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
 
-                using (logger.BeginMessage("message123", "correlation123"))
-                using (logger.BeginMessage("message123", "correlation456"))
+
+                try
                 {
-                    try
-                    {
-                        ThrowCustomException();
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.LogError(ex, "Error. {MessageProperty}", "Sample property value");
-                    }
+                    logger.LogInformation(
+                        "Cloning state for Job Id: {0}:{3}-> From parent Target Id: {1}{3}-> To child Target Id: {2}",
+                        "context.JobId",
+                        "parentState.TargetId",
+                        "state.TargetId",
+                        Environment.NewLine);
+                }
+                catch (Exception e)
+                {
+                    logger.LogError(e, "Error");
                 }
             }
         }
